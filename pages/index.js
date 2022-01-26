@@ -35,7 +35,7 @@ function Titulo(props) {
 export default function PaginaInicial() {
   // const username = 'omariosouto';
   const [username, setUsername] = useState('leo3965');
-  const [internalUsername, setInternalUsername] = useState('leo396');
+  const [internalUsername, setInternalUsername] = useState('leo3965');
   const [follower1, setFollower1] = useState('')
   const [follower2, setFollower2] = useState('')
   const [follower3, setFollower3] = useState('')
@@ -63,6 +63,7 @@ export default function PaginaInicial() {
 
   return (
     <>
+    {getFollowers(username)}
       <Box
         styleSheet={{
           display: 'flex', alignItems: 'center', justifyContent: 'center',
