@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box, Text, TextField, Image, Button } from '@skynexui/components';
 import CircularProgressWithLabel from './components/utils/circularProgressWithLabel';
+//import EmojisContainer from './components/utils/emojisContainer';
 
 export default function Teste() {
     return (
@@ -10,7 +11,8 @@ export default function Teste() {
             width: '300px'
         }}>
             <div>Oi</div>
-            <CircularProgressWithLabel></CircularProgressWithLabel>
+            {/* <EmojisContainer></EmojisContainer> */}
+            {/* <CircularProgressWithLabel></CircularProgressWithLabel> */}
         </Box>
     );
 }
