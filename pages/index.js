@@ -32,8 +32,7 @@ function Titulo(props) {
 // }
 // export default HomePage
 
-export default function PaginaInicial() {
-  // const username = 'omariosouto';
+export default function HomePage() {
   const [username, setUsername] = useState('leo3965');
   const [internalUsername, setInternalUsername] = useState('leo3965');
   const [follower1, setFollower1] = useState('')
@@ -155,7 +154,7 @@ export default function PaginaInicial() {
                 fullWidth
                 buttonColors={{
                   contrastColor: appConfig.theme.colors.neutrals["000"],
-                  mainColor: appConfig.theme.colors.primary[500],
+                  mainColor: appConfig.theme.colors.primary[900],
                   mainColorLight: appConfig.theme.colors.primary[400],
                   mainColorStrong: appConfig.theme.colors.primary[600],
                 }}
