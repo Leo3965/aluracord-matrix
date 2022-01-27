@@ -1,11 +1,44 @@
 import { Box, Text, TextField, Image, Button } from '@skynexui/components';
 import React from 'react';
 import appConfig from '../config.json';
-import { ReactComponent as Logo } from '../imgs/trash-simple.svg';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import CircularInfinitProgress from './components/utils/circularProgressWithLabel';
+
+const  SUPABASE_ANNON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzI4Njc3MiwiZXhwIjoxOTU4ODYyNzcyfQ.RxO648ZMrDjqohQ_ofDGk7BPj_ZXmCpCDNsAK_W0aRc';
+const SUPA_BASE_URL = 'https://ypvberegmryararzjuas.supabase.co';
+
+// Create a single supabase client for interacting with your database
+const SUPABASE = createClient(SUPA_BASE_URL, SUPABASE_ANNON_KEY);
+
+//fetch(`${SUPA_BASE_URL}/rest/v1/mensagens?select=*`, {
+//    headers: {
+//        'Content-Type': 'application/json',
+//        'apiKey': 'Bearer' + SUPABASE_ANNON_KEY
+//    }
+//})
+//.then((res) => {
+//    return res.json();
+//})
+//.then((res) => {
+//    console.log(res);
+//});
 
 export default function ChatPage() {
     const [mensagem, setMensagem] = React.useState('');
     const [listaDeMensagens, setListaDeMensagens] = React.useState([]);
+    const [spinner, setSpinner] = React.useState(false);
+
+    React.useEffect(() => {
+        setSpinner(true);
+        SUPABASE.from('mensagens')
+        .select('*')
+        .order('id', {ascending: false})
+        .then(({ data }) => {
+            console.log('Dados da consulta: ', data);
+            setListaDeMensagens(data);
+            setSpinner(false);
+        });
+    }, []);
 
     /*
     // Usuário
@@ -20,16 +53,24 @@ export default function ChatPage() {
     */
     function handleNovaMensagem(novaMensagem) {
         const mensagem = {
-            id: listaDeMensagens.length + 1,
+            //id: listaDeMensagens.length + 1,
             de: 'vanessametonini',
             texto: novaMensagem,
         };
 
-        setListaDeMensagens([
-            mensagem,
-            ...listaDeMensagens,
-        ]);
-        setMensagem('');
+        SUPABASE
+        .from('mensagens')
+        .insert([
+            mensagem
+        ])
+        .then(({ data }) => {
+            setListaDeMensagens([
+                data[0],
+                ...listaDeMensagens,
+            ]);
+            setMensagem('');
+        });
+
     }
 
     function deletarMensagem(idMensagem) {
@@ -48,7 +89,7 @@ export default function ChatPage() {
             styleSheet={{
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 backgroundColor: appConfig.theme.colors.primary[500],
-                backgroundImage: `url(https://virtualbackgrounds.site/wp-content/uploads/2020/08/the-matrix-digital-rain.jpg)`,
+                backgroundImage: 'url(https://raw.githubusercontent.com/Leo3965/aluracord-matrix/main/imgs/billy-huynh-W8KTS-mhFUE-unsplash.jpg)',
                 backgroundRepeat: 'no-repeat', backgroundSize: 'cover', backgroundBlendMode: 'multiply',
                 color: appConfig.theme.colors.neutrals['000']
             }}
@@ -80,7 +121,7 @@ export default function ChatPage() {
                         padding: '16px',
                     }}
                 >
-                    <MessageList mensagens={listaDeMensagens} deletarMensagem={deletarMensagem} />
+                    <MessageList mensagens={listaDeMensagens} spinner={spinner} deletarMensagem={deletarMensagem} />
                     {/* {listaDeMensagens.map((mensagemAtual) => {
                         return (
                             <li key={mensagemAtual.id}>
@@ -182,6 +223,14 @@ function MessageList(props) {
                 marginBottom: '16px',
             }}
         >
+            {props.spinner ? <CircularInfinitProgress 
+                styleSheet={{
+                    height: '10px',
+                    width: '10px'
+                }}
+             ></CircularInfinitProgress> : <></>
+            }
+            
             {props.mensagens.map((mensagem) => {
                 return (
                     <Text
@@ -217,7 +266,7 @@ function MessageList(props) {
                                             display: 'inline-block',
                                             marginRight: '8px'
                                         }}
-                                        src={`https://github.com/vanessametonini.png`}
+                                        src={`https://github.com/${mensagem.de}.png`}
                                     />
                                     <Text tag="strong">
                                         {mensagem.de}

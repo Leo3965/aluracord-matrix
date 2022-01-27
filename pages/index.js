@@ -69,7 +69,7 @@ export default function HomePage() {
           backgroundColor: appConfig.theme.colors.primary[500],
           //backgroundImage: 'url(https://virtualbackgrounds.site/wp-content/uploads/2020/08/the-matrix-digital-rain.jpg)',
           //backgroundImage: 'url(../imgs/billy-huynh-W8KTS-mhFUE-unsplash.jpg)',
-          backgroundImage: 'url(https://images.unsplash.com/photo-1496715976403-7e36dc43f17b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80)',
+          backgroundImage: 'url(https://raw.githubusercontent.com/Leo3965/aluracord-matrix/main/imgs/billy-huynh-W8KTS-mhFUE-unsplash.jpg)',
           backgroundRepeat: 'no-repeat', backgroundSize: 'cover', backgroundBlendMode: 'multiply',
         }}
       >
@@ -96,7 +96,7 @@ export default function HomePage() {
               as="form"
               onSubmit={function (event) {
                 event.preventDefault();
-                console.log('Alguém submeteu o form');
+                //console.log('Alguém submeteu o form');
                 router.push('/chat');
                 // window.location.href = '/chat';
               }}
