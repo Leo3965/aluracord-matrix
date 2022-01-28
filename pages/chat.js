@@ -95,6 +95,12 @@ export default function ChatPage() {
     }
 
     function deletarMensagem(idMensagem) {
+        supaClient
+        .from('mensagens')
+        .delete()
+        .match({ id: idMensagem})
+        .then();
+
         let novaListaDeMensagens = listaDeMensagens.filter((msg, index) => {
             return msg.id !== idMensagem;
         });
@@ -196,7 +202,7 @@ export default function ChatPage() {
                             }}/>
                             <Button
                                 type='submit'
-                                label='Entrar'
+                                label='Send'
                                 width='20%'
                                 buttonColors={{
                                 contrastColor: appConfig.theme.colors.neutrals["050"],
@@ -311,7 +317,12 @@ function MessageList(props) {
                                 </Box>
                                 {mensagem.texto.startsWith(':sticker:') ?  
                                     (
-                                        <Image src={mensagem.texto.replace(':sticker:', '')} />
+                                        <Image
+                                            styleSheet={{
+                                                maxWidth: '100px'
+                                            }} 
+                                            src={mensagem.texto.replace(':sticker:', '')}
+                                        />
                                     ) 
                                     : 
                                     (mensagem.texto)
