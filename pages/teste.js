@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Text, TextField, Image, Button } from '@skynexui/components';
-import CircularProgressWithLabel from './components/utils/circularProgressWithLabel';
+//import CircularProgressWithLabel from './components/utils/circularProgressWithLabel';
 //import EmojisContainer from './components/utils/emojisContainer';
 
 export default function Teste() {
