@@ -2,13 +2,15 @@ import { Box, Text, TextField, Image, Button } from '@skynexui/components';
 import React from 'react';
 import appConfig from '../config.json';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import CircularInfinitProgress from './components/utils/circularProgressWithLabel';
+import CircularInfinitProgress from '../src/components/utils/circularProgressWithLabel';
+import { useRouter } from 'next/router';
+import { ButtonSendSticker } from '../src/components/ButtonSendSticker';
 
 const  SUPABASE_ANNON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzI4Njc3MiwiZXhwIjoxOTU4ODYyNzcyfQ.RxO648ZMrDjqohQ_ofDGk7BPj_ZXmCpCDNsAK_W0aRc';
 const SUPA_BASE_URL = 'https://ypvberegmryararzjuas.supabase.co';
 
 // Create a single supabase client for interacting with your database
-const SUPABASE = createClient(SUPA_BASE_URL, SUPABASE_ANNON_KEY);
+const supaClient = createClient(SUPA_BASE_URL, SUPABASE_ANNON_KEY);
 
 //fetch(`${SUPA_BASE_URL}/rest/v1/mensagens?select=*`, {
 //    headers: {
@@ -23,20 +25,41 @@ const SUPABASE = createClient(SUPA_BASE_URL, SUPABASE_ANNON_KEY);
 //    console.log(res);
 //});
 
+function listenerNewMessages(addMessage) {
+    return supaClient
+    .from('mensagens')
+    .on('INSERT', (backResponse) => {
+        addMessage(backResponse.new);
+    })
+    .subscribe();
+}
+
 export default function ChatPage() {
+    const router = useRouter();
+    const usuarioLogado = router.query.username;
     const [mensagem, setMensagem] = React.useState('');
     const [listaDeMensagens, setListaDeMensagens] = React.useState([]);
     const [spinner, setSpinner] = React.useState(false);
 
     React.useEffect(() => {
         setSpinner(true);
-        SUPABASE.from('mensagens')
+        supaClient.from('mensagens')
         .select('*')
         .order('id', {ascending: false})
         .then(({ data }) => {
-            console.log('Dados da consulta: ', data);
+            //console.log('Dados da consulta: ', data);
             setListaDeMensagens(data);
             setSpinner(false);
+        });
+
+        listenerNewMessages((msg) => {
+            //handleNovaMensagem(msg); quebrando o banco kkk
+            setListaDeMensagens((currentMessageList) => {
+                return [
+                    msg,
+                    ...currentMessageList,
+                ]
+            });
         });
     }, []);
 
@@ -54,22 +77,20 @@ export default function ChatPage() {
     function handleNovaMensagem(novaMensagem) {
         const mensagem = {
             //id: listaDeMensagens.length + 1,
-            de: 'vanessametonini',
+            de: usuarioLogado,
             texto: novaMensagem,
         };
 
-        SUPABASE
+        supaClient
         .from('mensagens')
         .insert([
             mensagem
         ])
         .then(({ data }) => {
-            setListaDeMensagens([
-                data[0],
-                ...listaDeMensagens,
-            ]);
-            setMensagem('');
+            //console.log(data);
         });
+
+        setMensagem('');
 
     }
 
@@ -139,6 +160,8 @@ export default function ChatPage() {
                         styleSheet={{
                             display: 'flex',
                             alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '10px',
                             width: '100%'
                         }}
                         >
@@ -167,6 +190,10 @@ export default function ChatPage() {
                                     color: appConfig.theme.colors.neutrals[200],
                                 }}
                             />
+                            <ButtonSendSticker onStickerClick={(sticker) => {
+                                //console.log('Salva sticker no banco de dados!', sticker)
+                                handleNovaMensagem(`:sticker: ${sticker}`);
+                            }}/>
                             <Button
                                 type='submit'
                                 label='Entrar'
@@ -282,7 +309,14 @@ function MessageList(props) {
                                         {(new Date().toLocaleDateString())}
                                     </Text>
                                 </Box>
-                                {mensagem.texto}
+                                {mensagem.texto.startsWith(':sticker:') ?  
+                                    (
+                                        <Image src={mensagem.texto.replace(':sticker:', '')} />
+                                    ) 
+                                    : 
+                                    (mensagem.texto)
+                                }
+                                
                             </Box>
 
                             <Box>

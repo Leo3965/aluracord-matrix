@@ -97,7 +97,7 @@ export default function HomePage() {
               onSubmit={function (event) {
                 event.preventDefault();
                 //console.log('Alguém submeteu o form');
-                router.push('/chat');
+                router.push(`/chat?username=${username}`);
                 // window.location.href = '/chat';
               }}
               styleSheet={{
